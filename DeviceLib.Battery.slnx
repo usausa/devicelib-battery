@@ -12,7 +12,12 @@
     <File Path="README.md" />
   </Folder>
   <Folder Name="/Library/">
+    <Project Path="DeviceLib.Battery/DeviceLib.Battery.csproj" />
+  </Folder>
+  <Folder Name="/Tool/">
+    <Project Path="DeviceTool.Battery/DeviceTool.Battery.csproj" />
   </Folder>
   <Folder Name="/Example/">
+    <Project Path="Example/Example.csproj" DefaultStartup="true" />
   </Folder>
 </Solution>

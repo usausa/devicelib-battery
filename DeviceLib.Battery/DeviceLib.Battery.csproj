@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net11.0;net10.0</TargetFrameworks>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <IsAotCompatible>true</IsAotCompatible>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>DeviceLib.Battery</PackageId>
+    <Title>DeviceLib.Battery</Title>
+    <Description>Library for reading the battery level of wireless devices.</Description>
+    <PackageTags>device battery logitech hidpp bluetooth</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="DeviceTool.Battery" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>devbat</ToolCommandName>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>DeviceTool.Battery</PackageId>
+    <Title>DeviceTool.Battery</Title>
+    <Description>Battery tool for wireless devices.</Description>
+    <PackageTags>tools battery logitech bluetooth</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.CommandLine" Version="3.0.0" />
+    <PackageReference Include="Usa.Smart.CommandLine.Hosting" Version="3.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DeviceLib.Battery\DeviceLib.Battery.csproj" />
+  </ItemGroup>
+
+</Project>
