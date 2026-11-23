@@ -12,8 +12,6 @@ internal sealed class HidppDevice
 {
     private static readonly TimeSpan RequestTimeout = TimeSpan.FromSeconds(1);
 
-    private static readonly byte[] NoParameters = [0x00, 0x00, 0x00];
-
     private static readonly ushort[] BatteryFeatures = [HidppFeature.UnifiedBattery, HidppFeature.BatteryLevelStatus, HidppFeature.BatteryVoltage];
 
     private readonly HidppChannel channel;
@@ -44,7 +42,7 @@ internal sealed class HidppDevice
             return [];
         }
 
-        var count = await CallAsync(featureSet.Index, 0, NoParameters).ConfigureAwait(false);
+        var count = await CallAsync(featureSet.Index, 0).ConfigureAwait(false);
         if (!count.IsSuccess || (count.Payload.Length == 0))
         {
             return [];
@@ -145,12 +143,15 @@ internal sealed class HidppDevice
         };
     }
 
+    private ValueTask<HidppReply> CallAsync(byte featureIndex, byte function) =>
+        channel.CallAsync(Index, featureIndex, function, ReadOnlyMemory<byte>.Empty, RequestTimeout);
+
     private ValueTask<HidppReply> CallAsync(byte featureIndex, byte function, byte[] parameters) =>
         channel.CallAsync(Index, featureIndex, function, parameters, RequestTimeout);
 
     private async ValueTask<string?> ReadNameAsync(byte featureIndex)
     {
-        var count = await CallAsync(featureIndex, 0, NoParameters).ConfigureAwait(false);
+        var count = await CallAsync(featureIndex, 0).ConfigureAwait(false);
         if (!count.IsSuccess || (count.Payload.Length == 0))
         {
             return null;
@@ -176,13 +177,13 @@ internal sealed class HidppDevice
 
     private async ValueTask<byte?> ReadTypeAsync(byte featureIndex)
     {
-        var reply = await CallAsync(featureIndex, 2, NoParameters).ConfigureAwait(false);
+        var reply = await CallAsync(featureIndex, 2).ConfigureAwait(false);
         return reply.IsSuccess && (reply.Payload.Length > 0) ? reply.Payload[0] : null;
     }
 
     private async ValueTask<string?> ReadUnitIdAsync(byte featureIndex)
     {
-        var reply = await CallAsync(featureIndex, 0, NoParameters).ConfigureAwait(false);
+        var reply = await CallAsync(featureIndex, 0).ConfigureAwait(false);
         if (!reply.IsSuccess || (reply.Payload.Length < 5))
         {
             return null;
@@ -194,8 +195,8 @@ internal sealed class HidppDevice
 
     private async ValueTask<HidppBatteryReading?> ReadUnifiedAsync(byte featureIndex)
     {
-        var capabilities = await CallAsync(featureIndex, 0, NoParameters).ConfigureAwait(false);
-        var status = await CallAsync(featureIndex, 1, NoParameters).ConfigureAwait(false);
+        var capabilities = await CallAsync(featureIndex, 0).ConfigureAwait(false);
+        var status = await CallAsync(featureIndex, 1).ConfigureAwait(false);
         if (!status.IsSuccess || (status.Payload.Length < 3))
         {
             return null;
@@ -215,7 +216,7 @@ internal sealed class HidppDevice
 
     private async ValueTask<HidppBatteryReading?> ReadLevelStatusAsync(byte featureIndex)
     {
-        var reply = await CallAsync(featureIndex, 0, NoParameters).ConfigureAwait(false);
+        var reply = await CallAsync(featureIndex, 0).ConfigureAwait(false);
         if (!reply.IsSuccess || (reply.Payload.Length < 3))
         {
             return null;
@@ -233,7 +234,7 @@ internal sealed class HidppDevice
 
     private async ValueTask<HidppBatteryReading?> ReadVoltageAsync(byte featureIndex)
     {
-        var reply = await CallAsync(featureIndex, 0, NoParameters).ConfigureAwait(false);
+        var reply = await CallAsync(featureIndex, 0).ConfigureAwait(false);
         if (!reply.IsSuccess || (reply.Payload.Length < 3))
         {
             return null;

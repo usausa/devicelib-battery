@@ -38,8 +38,6 @@ internal sealed class HidppChannel : IDisposable
 
     private const byte GetLongRegister = 0x83;
 
-    private static readonly byte[] NoParameters = [0x00, 0x00, 0x00];
-
     private readonly HidDevice? shortDevice;
 
     private readonly HidDevice? longDevice;
@@ -66,7 +64,7 @@ internal sealed class HidppChannel : IDisposable
     }
 
     public ValueTask<HidppReply> PingAsync(byte deviceIndex, TimeSpan timeout) =>
-        SendAsync(deviceIndex, 0x00, 0x10 | SoftwareId, NoParameters, null, false, timeout);
+        SendAsync(deviceIndex, 0x00, 0x10 | SoftwareId, ReadOnlyMemory<byte>.Empty, null, false, timeout);
 
     public ValueTask<HidppReply> CallAsync(byte deviceIndex, byte featureIndex, byte function, ReadOnlyMemory<byte> parameters, TimeSpan timeout) =>
         SendAsync(deviceIndex, featureIndex, (byte)((function << 4) | SoftwareId), parameters, null, false, timeout);

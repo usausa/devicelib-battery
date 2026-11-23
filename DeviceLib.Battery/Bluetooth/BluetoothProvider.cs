@@ -9,6 +9,8 @@ public sealed class BluetoothProvider : IBatteryProvider
 
     public string Name => ProviderName;
 
+    public bool IncludeDisconnected { get; init; }
+
     public ValueTask<IReadOnlyList<BatteryInfo>> ReadAsync(CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
@@ -16,6 +18,11 @@ public sealed class BluetoothProvider : IBatteryProvider
         var batteries = new List<BatteryInfo>();
         foreach (var battery in BluetoothBatteryReader.Read())
         {
+            if (!battery.Connected && !IncludeDisconnected)
+            {
+                continue;
+            }
+
             batteries.Add(new BatteryInfo
             {
                 Id = $"bluetooth:{battery.ContainerId}",

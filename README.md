@@ -11,7 +11,7 @@ Windows only.
 | Provider | Device | Method |
 |:-|:-|:-|
 | Logitech | HID++ 2.0 devices on Bolt / Unifying receivers, USB and Bluetooth | Feature `0x1004`, `0x1000`, `0x1001` |
-| Bluetooth | Paired Bluetooth devices that report the battery level to Windows | Device property `{104EA319-6EE2-4701-BD47-8DDBF425BBE5} 2` |
+| Bluetooth | Connected Bluetooth devices paired with Windows | Device property `{104EA319-6EE2-4701-BD47-8DDBF425BBE5} 2` |
 
 ## Usage
 
@@ -34,6 +34,16 @@ using DeviceLib.Battery.Logitech;
 var reader = new BatteryReader(new LogitechProvider());
 ```
 
+Include disconnected Bluetooth devices.
+
+```csharp
+using DeviceLib.Battery;
+using DeviceLib.Battery.Bluetooth;
+using DeviceLib.Battery.Logitech;
+
+var reader = new BatteryReader(new LogitechProvider(), new BluetoothProvider { IncludeDisconnected = true });
+```
+
 ## Global tool
 
 ### Install
@@ -54,11 +64,7 @@ var reader = new BatteryReader(new LogitechProvider());
 
 ```
 devbat list
+devbat list -a
 devbat watch -i 60
 devbat logitech -f -t
 ```
-
-## Reference
-
-- [libratbag](https://github.com/libratbag/libratbag) (MIT) : HID++ message, root, feature set, `0x1000`, `0x1001`
-- [openlogi-hidpp](https://github.com/AprilNEA/OpenLogi/tree/master/crates/openlogi-hidpp) (0BSD) : `0x0003`, `0x0005`, `0x1004`, `0x1001` flags, Bolt receiver pairing information

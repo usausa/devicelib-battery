@@ -30,6 +30,16 @@ internal static class KindGuess
         return ContainsAny(name, HeadsetWords) ? DeviceKind.Headset : DeviceKind.Unknown;
     }
 
-    private static bool ContainsAny(string text, string[] words) =>
-        words.Any(word => text.Contains(word, StringComparison.OrdinalIgnoreCase));
+    private static bool ContainsAny(string text, ReadOnlySpan<string> words)
+    {
+        foreach (var word in words)
+        {
+            if (text.Contains(word, StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

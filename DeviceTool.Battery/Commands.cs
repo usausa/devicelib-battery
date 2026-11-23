@@ -1,6 +1,7 @@
 namespace DeviceTool.Battery;
 
 using DeviceLib.Battery;
+using DeviceLib.Battery.Bluetooth;
 using DeviceLib.Battery.Hid;
 using DeviceLib.Battery.Logitech;
 
@@ -19,9 +20,12 @@ internal static class CommandBuilderExtensions
 [Command("list", "List device batteries")]
 public sealed class ListCommand : ICommandHandler
 {
+    [Option<bool>("--all", "-a", Description = "Include disconnected Bluetooth devices")]
+    public bool All { get; set; }
+
     public async ValueTask ExecuteAsync(CommandContext context)
     {
-        var batteries = await new BatteryReader().ReadAsync(context.CancellationToken).ConfigureAwait(false);
+        var batteries = await ReaderFactory.Create(All).ReadAsync(context.CancellationToken).ConfigureAwait(false);
         await BatteryTable.WriteAsync(Console.Out, batteries).ConfigureAwait(false);
     }
 }
@@ -32,9 +36,12 @@ public sealed class WatchCommand : ICommandHandler
     [Option<int>("--interval", "-i", Description = "Interval in seconds", DefaultValue = 60)]
     public int Interval { get; set; }
 
+    [Option<bool>("--all", "-a", Description = "Include disconnected Bluetooth devices")]
+    public bool All { get; set; }
+
     public async ValueTask ExecuteAsync(CommandContext context)
     {
-        var reader = new BatteryReader();
+        var reader = ReaderFactory.Create(All);
         using var timer = new PeriodicTimer(TimeSpan.FromSeconds(Math.Max(Interval, 1)));
         try
         {
@@ -179,6 +186,12 @@ public sealed class LogitechCommand : ICommandHandler
             }
         }
     }
+}
+
+internal static class ReaderFactory
+{
+    public static BatteryReader Create(bool includeDisconnected) =>
+        new(new LogitechProvider(), new BluetoothProvider { IncludeDisconnected = includeDisconnected });
 }
 
 internal static class BatteryTable
